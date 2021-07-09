@@ -19,7 +19,8 @@ func main() {
 
 	cnn, err := net.Dial("unix", path)
 	if err != nil {
-		log.Fatalf("failed: %s", err)
+		log.Printf("failed: %s", err)
+		return
 	}
 	client := rpc.NewClient(cnn)
 
@@ -32,7 +33,8 @@ func main() {
 	var res common.Response
 	err = client.Call("App.DoSomeWork", req, &res)
 	if err != nil {
-		log.Fatalf("error in rpc: %s", err)
+		log.Printf("error in rpc: %s", err)
+		return
 	}
 	fmt.Println(res.Message)
 }
