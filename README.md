@@ -10,4 +10,4 @@ Client (process that connects): `go run client/main.go ./test "My Message"`
 
 Server (process that listens should be stated on remote machine): `go run server/main.go ./test`
 
-Client SSH (process that connects should be started on host machine): `SSH_KEY=~/.ssh/id_rsa REMOTE_HOST=<machine> REMOTE_USER=<user> go run clientssh/main.go /absolute/path/to/test "My Message"`
+Client SSH (process that connects to host machine): `SSH_KEY=~/.ssh/id_rsa REMOTE_HOST=<machine> REMOTE_USER=<user> go run clientssh/main.go /absolute/path/to/test "My Message"`
