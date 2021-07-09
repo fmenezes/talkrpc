@@ -34,7 +34,7 @@ func ServeAt(path string) (err error) {
 
 func main() {
 	if len(os.Args) < 2 || len(os.Args[1]) == 0 {
-		log.Fatalf("usage: %s <path>", os.Args[0])
+		log.Printf("usage: %s <path>", os.Args[0])
 		return
 	}
 
@@ -42,11 +42,12 @@ func main() {
 
 	err := ServeAt(path)
 	if err != nil {
-		log.Fatalf("failed: %s", err)
+		log.Printf("failed: %s", err)
+		return
 	}
 	defer os.Remove(path)
 
 	signals := make(chan os.Signal)
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP)
-	log.Fatalf("Received signal %s. Exiting...\n", <-signals)
+	log.Printf("Received signal %s. Exiting...\n", <-signals)
 }
