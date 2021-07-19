@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option go_package = "github.com/fmenezes/talkrpc/grpc/service";
+
+message RequestResponse {
+  string message = 1;
+}
+
+service TalkRPC {
+    rpc DoSomeWork(RequestResponse) returns (RequestResponse) {}
+
+    rpc DoSomeWorkStream(stream RequestResponse) returns (stream RequestResponse) {}
+}

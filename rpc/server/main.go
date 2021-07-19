@@ -20,7 +20,7 @@ func (a *App) DoSomeWork(req common.Request, res *common.Response) (err error) {
 	return
 }
 
-func ServeAt(path string) (err error) {
+func serveAt(path string) (err error) {
 	rpc.Register(&App{})
 
 	listener, err := net.Listen("unix", path)
@@ -40,7 +40,7 @@ func main() {
 
 	path := os.Args[1]
 
-	err := ServeAt(path)
+	err := serveAt(path)
 	if err != nil {
 		log.Printf("failed: %s", err)
 		return
