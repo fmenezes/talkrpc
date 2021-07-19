@@ -19,3 +19,4 @@ Build: `cd service && protoc --go_out=. --go_opt=paths=source_relative --go-grpc
 Server (process that listens): `go run grpc/server/main.go ./test.sock`
 
 Client (process that connects): `go run grpc/client/main.go ./test.sock "My Message"`
+for stream/stdin mode: `go run grpc/client/main.go ./test.sock -`
