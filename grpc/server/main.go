@@ -53,15 +53,26 @@ func serveAt(path string) error {
 	pb.RegisterTalkRPCServer(grpcServer, &server{})
 
 	sig := make(chan os.Signal)
+	errChan := make(chan error)
 	go func() {
 		if err := grpcServer.Serve(lis); err != nil {
-			sig <- syscall.SIGINT
+			errChan <- err
 		}
 	}()
 
+	defer func() {
+		grpcServer.GracefulStop()
+	}()
+
 	signal.Notify(sig, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP)
-	log.Printf("Received signal %s. Exiting...\n", <-sig)
-	grpcServer.GracefulStop()
+
+	select {
+	case signal := <-sig:
+		log.Printf("Received signal %s. Exiting...\n", signal)
+	case err := <-errChan:
+		return err
+	}
+
 	return nil
 }
 
