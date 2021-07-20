@@ -7,6 +7,8 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 
 	pb "github.com/fmenezes/talkrpc/grpc/service"
 	"google.golang.org/grpc"
@@ -44,12 +46,23 @@ func (s *server) DoSomeWorkStream(stream pb.TalkRPC_DoSomeWorkStreamServer) erro
 func serveAt(path string) error {
 	lis, err := net.Listen("unix", path)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		return err
 	}
 	defer os.Remove(path)
 	grpcServer := grpc.NewServer()
 	pb.RegisterTalkRPCServer(grpcServer, &server{})
-	return grpcServer.Serve(lis)
+
+	sig := make(chan os.Signal)
+	go func() {
+		if err := grpcServer.Serve(lis); err != nil {
+			sig <- syscall.SIGINT
+		}
+	}()
+
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP)
+	log.Printf("Received signal %s. Exiting...\n", <-sig)
+	grpcServer.GracefulStop()
+	return nil
 }
 
 func main() {
